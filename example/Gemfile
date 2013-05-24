@@ -1,0 +1,5 @@
+source :rubygems
+
+gem 'raspar', :path => "../"
+#gem 'raspar', :git => 'git@github.com:lemig/raspar.git'
+gem 'nokogiri'
