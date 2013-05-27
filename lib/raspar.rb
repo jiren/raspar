@@ -43,7 +43,12 @@ module Raspar
     end
 
     def parse(url, html)
-      @parser_list[URI(url).host].parse(html)
+      host = URI(url).host
+      if @parser_list[host]
+        @parser_list[host].parse(html)
+      else
+        puts "No parser define for #{url}"
+      end
     end
 
     def add_parsing_map(url, selector_map, helper_module = nil)

@@ -36,15 +36,10 @@ module Raspar
                         end
 
         opts[:select] = opts[:select].join(',') if opts[:as] == :array
-
         opts[:eval] = opts[:eval].to_sym if opts[:eval].is_a?(String)
         opts[:eval] = block if block_given?
 
-        if opts[:common] == true
-          @common_fields[name.to_sym] = opts
-        else
-          @fields[name.to_sym] = opts
-        end
+        opts[:common] ? @common_fields[name.to_sym] = opts : @fields[name.to_sym] = opts
       end
 
       def field_names
@@ -106,6 +101,8 @@ module Raspar
           else
             attrs[field_name] = process_ele(klass, ele, opts) if ele
           end
+
+          #attrs[opts[:as]] ||= attrs[field_name] if opts[:as]
 
         end
 

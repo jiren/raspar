@@ -16,6 +16,7 @@ class Leguide
   field :name, '.block_bpu_feature .p b', :common => true
   field :specifications, '#page2', :common => true, :eval => :build_specification
 
+  field :alt_name,       '.gopt.offer.t'
   field :image,          '.lg_photo img', :attr => 'src'
   field :price,          '.price .euro.gopt'
   field :orignal_price,  '.price .barre'
@@ -42,6 +43,7 @@ class Leguide
 end
 
 url = 'http://www.leguide.com/sb/bp/5010500/hotpoint_ariston/ECO9F_149_FRS/55743410.htm'
+url = 'http://www.leguide.com/electromenager.htm'
 p ARGV[0] || url
 #page = open(ARGV[0] || url).read().gsub(/[[:cntrl:]@]/, '')
 page = open(ARGV[0] || url).read()
