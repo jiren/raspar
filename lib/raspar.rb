@@ -5,7 +5,6 @@ require 'delegate'
 require 'nokogiri'
 
 require 'raspar/version'
-require 'raspar/base'
 require 'raspar/parser'
 require 'raspar/dynamic_parser'
 

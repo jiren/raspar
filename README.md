@@ -1,7 +1,7 @@
 Raspar - scraping library
 =========================
 
-Raspar is a scraping library which help to map html elements to ruby object using css or xpath selector.Using this library user can define multiple parser for different websites, also user can add parsers dynamically and it will apply perticular scraper accoriding to input html page url.
+Raspar is a scraping library which help to map html elements to ruby object using css or xpath selector.Using this library user can define multiple parser for different websites and it select scraper accoriding to input html page url.Also user can add parser dynamically.
 
 Usage
 =====
@@ -85,7 +85,8 @@ class SampleParser
 end
 ```
 
-- Add domain url using domain method. This will help selecting parser according to url.
+- Include 'Raspar' module to class
+- Add domain url using 'domain' method. This will help selecting scraper according to url.
 - Define field which is going to parse. First argument is 'css' selector or 'xpath'. Second argument contain option.
   - Valid options are :attr, :eval.
   - :attr is selecting particular attribute for html element. In example for image, select image url using :attr => 'src'
