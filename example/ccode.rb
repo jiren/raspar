@@ -4,9 +4,6 @@ require 'open-uri'
 require 'raspar'
 require 'pp'
 
-@url = 'http://www.exchange-rate.com/currency-list.html' 
-PAGE = open(@url)
-
 class CCode
   include Raspar
 
@@ -18,6 +15,9 @@ class CCode
   field :code,     'td:nth-child(3)'
 end
 
-Raspar.parse('http://www.exchange-rate.com', PAGE).each do |i|
+url = 'http://www.exchange-rate.com/currency-list.html' 
+page = open(@url).read
+
+Raspar.parse(url, page).each do |i|
   pp i.attributes
 end

@@ -48,7 +48,7 @@ p ARGV[0] || url
 #page = open(ARGV[0] || url).read().gsub(/[[:cntrl:]@]/, '')
 page = open(ARGV[0] || url).read()
 
-Raspar.parse('http://www.leguide.com', page).collect do |i|
+Raspar.parse(url, page).collect do |i|
   i.class.field_names.each do |field|
     p "%-20s: %s" % [field, i[field] ]
   end
