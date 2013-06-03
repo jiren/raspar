@@ -126,6 +126,7 @@ module Raspar
           end
         end
 
+        @results << Result.new(:default, common_attrs, klass.domain) if @results.none?
         @results
       end
 

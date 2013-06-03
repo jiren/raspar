@@ -8,11 +8,12 @@ class CCode
   include Raspar
 
   domain 'http://www.exchange-rate.com'
-  parent 'table[cellpadding="2"] tr:gt(1)'
 
-  field :country,  'td:nth-child(1)'
-  field :currency, 'td:nth-child(2)'
-  field :code,     'td:nth-child(3)'
+  item :currency_code, 'table[cellpadding="2"] tr:gt(1)' do
+    field :country,  'td:nth-child(1)'
+    field :currency, 'td:nth-child(2)'
+    field :code,     'td:nth-child(3)'
+  end
 end
 
 url = 'http://www.exchange-rate.com/currency-list.html' 

@@ -10,21 +10,22 @@ class Leguide
   DATA_PROC = Proc.new{|text, ele| Nokogiri::HTML.parse(text).text.split(':').last.strip}
 
   domain 'http://www.leguide.com'
-  parent '.offers_list li'
 
   #External fields
-  field :name, '.block_bpu_feature .p b', :common => true
-  field :specifications, '#page2', :common => true, :eval => :build_specification
+  field :name, '.block_bpu_feature .p b'
+  field :specifications, '#page2', :eval => :build_specification
 
-  field :alt_name,       '.gopt.offer.t'
-  field :image,          '.lg_photo img', :attr => 'src'
-  field :price,          '.price .euro.gopt'
-  field :orignal_price,  '.price .barre'
-  field :desc,           '.gopt.description,.info .description'
-  field :vendor,         '.name a'
-  field :availability,   '.av', :attr => 'data-value', :eval => DATA_PROC
-  field :delivery_time,  '.dv', :attr => 'data-value', :eval => DATA_PROC
-  field :shipping_price, '.delivery.gopt', :eval => SHIPPING_PROC
+  item :product, '.offers_list li' do
+    field :alt_name,       '.gopt.offer.t'
+    field :image,          '.lg_photo img', :attr => 'src'
+    field :price,          '.price .euro.gopt'
+    field :orignal_price,  '.price .barre'
+    field :desc,           '.gopt.description,.info .description'
+    field :vendor,         '.name a'
+    field :availability,   '.av', :attr => 'data-value', :eval => DATA_PROC
+    field :delivery_time,  '.dv', :attr => 'data-value', :eval => DATA_PROC
+    field :shipping_price, '.delivery.gopt', :eval => SHIPPING_PROC
+  end
 
   #For External field define class method because it evalute only once for all object in sigle html doc.
   def build_specification(val, ele)

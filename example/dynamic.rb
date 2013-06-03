@@ -29,19 +29,23 @@ end
 
 domain  = 'http://www.leguide.com'
 selector_map = {
-  :parent => '.offers_list li',
-  :fields => {
-    :name           => { :select => '.block_bpu_feature .p b', :common => true},
-    :specifications => { :select => '#page2', :common => true, :eval => :build_specification },
-    :image          => { :select => 'img', :attr => 'src'},
-    :price          => { :select => '.price .euro.gopt', :eval => :parse_price},
-    :orignal_price  => { :select => '.price .barre', :eval => :parse_price},
-    :desc           => { :select => '.gopt.description,.info .description'},
-    :vendor         => { :select => '.name a' },
-    :availability   => { :select => '.av', :attr => 'data-value', :eval => :data_field_parse},
-    :delivery_time  => { :select => '.dv', :attr => 'data-value', :eval => :data_field_parse},
-    :shipping_price => { :select => '.delivery.gopt'}
-  }
+  :common_fields => {
+    :name => {:select => '.block_bpu_feature .p b'},
+    :specifications => {:select => '#page2', :eval => :build_specification}
+  },
+  :item_containers => {
+    :product =>{
+      :select => '.offers_list li',
+      :fields => {
+        :image          => { :select => 'img', :attr => 'src'},
+        :price          => { :select => '.price .euro.gopt', :eval => :parse_price},
+        :orignal_price  => { :select => '.price .barre', :eval => :parse_price},
+        :desc           => { :select => '.gopt.description,.info .description'},
+        :vendor         => { :select => '.name a' },
+        :availability   => { :select => '.av', :attr => 'data-value', :eval => :data_field_parse},
+        :delivery_time  => { :select => '.dv', :attr => 'data-value', :eval => :data_field_parse},
+        :shipping_price => { :select => '.delivery.gopt'}
+      }
 }
 
 Raspar.add_parseing_map(domain, selector_map, ParserHelper)
