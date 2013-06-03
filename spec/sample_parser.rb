@@ -6,16 +6,21 @@ class SampleParser
   field :desc, '.desc', :common => true, :eval => :full_desc
   field :specs, '.specs li', :common => true, :as => :array, :eval => :format_specs
 
-  parent 'div,span.second'
+  item :item, '.item,span.second' do
+    field :image, 'img', :attr => 'src'
+    field :image_url, 'img', :attr => 'src', :eval => :make_image_url
+    field :name,  'span:first, .name', :eval => :full_name
+    field :price, '.price', :eval => Proc.new{|i| i.to_i}
+    field :all_text 
+    field :price_map do |text, ele|
+      val = ele.search('span').collect{|s| s.content.strip}
+      {val[0] => val[1].to_f}
+    end
+  end
 
-  field :image, 'img', :attr => 'src'
-  field :image_url, 'img', :attr => 'src', :eval => :make_image_url
-  field :name,  'span:first, .name', :eval => :full_name
-  field :price, '.price', :eval => Proc.new{|i| i.to_i}
-  field :all_text 
-  field :price_map do |text, ele|
-    val = ele.search('span').collect{|s| s.content.strip}
-    {val[0] => val[1].to_f}
+  item :offer, '.offer' do
+    field :name, '.name'
+    field :percentage, '.percentage'
   end
 
   def full_name(val, ele)
@@ -32,7 +37,7 @@ class SampleParser
   end
 
   def full_desc(text, ele)
-    "#{text} for #{self[:name]}"
+    "#{text} is full desc"
   end
 
   def format_specs(text, ele)
@@ -53,19 +58,19 @@ FAKE_PAGE = %q{
     <li>Spec 3</li>
   </ul>
 
-  <div>
+  <div class="item">
     <img src="1">
     <span>Test1</span>
     <span class="price">10</span>
   </div>
 
-  <div>
+  <div class="item">
     <img src="2">
     <span>Test2</span>
     <span class="price">20</span>
   </div>
 
-  <div>
+  <div class="item">
     <img src="3">
     <span>Test3</span>
     <span class="price">30</span>
@@ -76,6 +81,11 @@ FAKE_PAGE = %q{
     <span>Test4</span>
     <span class="price">40</span>
   </span>
+
+  <div class="offer">
+    <span class="name">First Offer</span>
+    <span class="percentage">10% off</span>
+  </div>
 
   </body>
   </html>

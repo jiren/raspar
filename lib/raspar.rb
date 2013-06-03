@@ -5,6 +5,7 @@ require 'delegate'
 require 'nokogiri'
 
 require 'raspar/version'
+require 'raspar/result'
 require 'raspar/parser'
 require 'raspar/dynamic_parser'
 
@@ -46,7 +47,8 @@ module Raspar
       if @parser_list[host]
         @parser_list[host].parse(html)
       else
-        puts "No parser define for #{url}"
+        puts "No parser define for #{host}"
+        nil
       end
     end
 

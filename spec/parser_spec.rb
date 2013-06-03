@@ -23,27 +23,20 @@ module Raspar
         SampleParser.domain.should == @domain
       end
 
-      it "should set domain_url" do
-        SampleParser.domain_url.should == @site
-      end
-
       it 'should return absoulte url' do
         SampleParser.absolute_url('/test').should == @site + '/test'
       end
 
       it "should have info" do
-        SampleParser.info.should == {:domain => @domain, :parent => @parent_selector }
+        SampleParser.info.should == {
+                        :domain => @domain, 
+                        :item_containers => [:item, :offer], 
+                        :common_fields => [:desc, :specs] 
+                      }
       end
 
       it "should not define accessor if options not contail :selector" do
         SampleParser.instance_methods.include?(:extra) == false
-      end
-
-      it "should have parent assignment only once" do
-        parent = SampleParser.info[:parent]
-        SampleParser.parent 'change'
-
-        SampleParser.info[:parent].should == parent
       end
 
     end
@@ -52,10 +45,15 @@ module Raspar
 
       it "should parse html and create object" do
         parsed_objs = Raspar.parse(@site, FAKE_PAGE)
-        parsed_objs.length.should == 4
+
+        #Total parse objects
+        parsed_objs.length.should == 5
+
+        parsed_objs.count{|o| o.name == :item}.should == 4
+        parsed_objs.count{|o| o.name == :offer}.should == 1
 
         count = 1
-        parsed_objs.each do |o|
+        parsed_objs.select{|o| o.name == :item}.each do |o|
           o[:name].should == "Full Name: Test#{count}"
           o[:image].should == count.to_s
 
@@ -64,7 +62,7 @@ module Raspar
           o[:price].should == (count * 10)
 
           #External Field check
-          o[:desc].should == "Description for Full Name: Test#{count}"
+          o[:desc].should == "Description is full desc"
 
           #self selector 
           o[:all_text].should == "Test#{count}\n    #{count*10}"
@@ -74,6 +72,11 @@ module Raspar
           o[:specs].should == ['spec 1', 'spec 2', 'spec 3']
 
           count = count + 1
+        end
+
+        parsed_objs.select{|o| o.name == :offer}.each do |o|
+          o[:name].should == 'First Offer'
+          o[:percentage].should == '10% off'
         end
 
       end

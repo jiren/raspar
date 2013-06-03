@@ -1,69 +1,44 @@
 module Raspar
 
   class DynamicParser
+    include Parser::InstanceMethods
     include Parser::ClassMethods
 
-    attr_accessor :parent_selector
-    attr_reader :domain_url
+    attr_accessor :domain, :domain_url, 
+      :common_fields, :item_containers, :_current_container_
 
     def initialize
-      @fields = {}
       @common_fields = {}
-      @is_dynamic_parser = true
+      @item_containers = {}
     end
 
     def parse(html)
-      doc = Nokogiri::HTML(html)
-      common_attrs = field_parser(self, doc, common_fields)
-
-      doc.search(parent_selector).collect do |ele|
-        attrs = field_parser(self, ele, fields)
-        attrs.merge!(common_attrs.clone)
-        Result.new(attrs, @domain)
-      end
-    end
-
-    def domain=(val)
-      @domain = val
-    end
-
-    def domain_url=(val)
-      @domain_url = val
-    end
-
-    def inspect
-      "#<#{self.class.name} @domain=#{@domain}>"
+      self.process(html, self)
     end
 
     def self.register(url, selector_map, helper_module = nil)
       dp =  self.new
-      dp.domain_url = url
-      dp.parent_selector = selector_map[:parent]
-      selector_map[:fields].each do |field, opts|
-        dp.field(field, opts)
+
+      if selector_map[:common_fields]
+        selector_map[:common_fields].each { |field, opts| dp.field(field, opts) }
       end
+
+      if selector_map[:item_containers]
+        selector_map[:item_containers].each do |name, item_opts|
+          dp.item_containers[name] = { :select => item_opts[:select], :fields => {} }
+
+          dp._current_container_ = name.to_sym
+          item_opts[:fields].each { |field, opts| dp.field(field, opts) } 
+          dp._current_container_ = nil
+        end
+      end
+
+      #TODO: Create constant from string and extend object.
       dp.extend(helper_module) if helper_module
+      dp.domain_url = url
       dp.domain = Raspar.register(url, dp)
       dp
     end
-  end
-
-  class Result
-    attr_accessor :attributes, :domain
-
-    def initialize(attributes, domain)
-      @attributes = attributes
-      @domain = domain
-    end
-
-    def [](field)
-      @attributes[field]
-    end
-
-    def method_missing(name, *args, &block)
-      @attributes[name]
-    end
-
   end
 
 end

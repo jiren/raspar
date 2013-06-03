@@ -2,12 +2,11 @@ module Raspar
   module Parser
 
     module ClassMethods
-      attr_accessor :fields, :common_fields, :is_dynamic_parser
-      attr_reader :domain_url
+      attr_reader :domain, :common_fields, :item_containers
 
       def _init_parser_
-        @fields = {}
         @common_fields = {}
+        @item_containers = {}
       end
 
       #
@@ -39,15 +38,21 @@ module Raspar
         opts[:eval] = opts[:eval].to_sym if opts[:eval].is_a?(String)
         opts[:eval] = block if block_given?
 
-        opts[:common] ? @common_fields[name.to_sym] = opts : @fields[name.to_sym] = opts
+        #opts[:common] ? @common_fields[name.to_sym] = opts : @fields[name.to_sym] = opts
+        if @_current_container_
+          @item_containers[@_current_container_][:fields][name.to_sym] = opts
+        else
+          @common_fields[name.to_sym] = opts
+        end
       end
 
-      def field_names
-        @common_fields.keys + @fields.keys
-      end
+      def item(item_name, select, &block)
+        item_name = item_name.to_sym
+        @item_containers[item_name] = { :select => select, :fields => {} } 
 
-      def parent(selector)
-        @parent_selector = selector if @parent_selector.nil?
+        @_current_container_ = item_name
+        yield
+        @_current_container_ = nil
       end
 
       def domain(url = nil)
@@ -63,50 +68,65 @@ module Raspar
       end
 
       def parse(html)
-        doc = Nokogiri::HTML(html)
-        #common_attrs = self.field_parser(self, doc, self.common_fields)
+        self.new.process(html)
+      end
 
-        doc.search(@parent_selector).collect do |ele|
-          self.new.process(doc, ele)
-        end
+      def fields
+        {:item_containers => @item_containers, :common_fields => @common_fields}
       end
 
       def info
-        {:parent => @parent_selector, :domain => @domain}
+        {:domain => @domain, :item_containers => @item_containers.keys, :common_fields => @common_fields.keys}
       end
+    end
 
-      def inspect
-        "#<#{self.name} @domain=#{@domain}>"
-      end
+    module InstanceMethods
+      attr_reader :attributes
 
       #Parse doc: html node accroding to field selector 
       #If selector is :self then input doc is a selected doc
       #Select first 
-      def field_parser(klass, doc, field_map)
+      def field_parser(doc, field_map)
         attrs = {}
-
+       
         field_map.each do |field_name, opts|
           ele = doc
 
           if opts[:select]
             if opts[:as] == :array
-              attrs[field_name] = doc.search(opts[:select]).collect{|e| process_ele(klass, e, opts)}
+              attrs[field_name] = doc.search(opts[:select]).collect{|e| process_ele(e, opts)}
             else
               opts[:select].each do |s|
                 ele = doc.search(s).first
                 break if ele
               end
-              attrs[field_name] = process_ele(klass, ele, opts) if ele
+              attrs[field_name] = process_ele(ele, opts) if ele
             end
           else
-            attrs[field_name] = process_ele(klass, ele, opts) if ele
+            attrs[field_name] = process_ele(ele, opts) if ele
           end
 
           #attrs[opts[:as]] ||= attrs[field_name] if opts[:as]
-
         end
 
         attrs
+      end
+
+      def process(html, klass = nil)
+        @results = []
+        doc = Nokogiri::HTML(html)
+        klass = self.class unless klass
+
+        common_attrs = field_parser(doc, klass.common_fields)
+
+        klass.item_containers.each do |name, item|
+          doc.search(item[:select]).each do |ele|
+             attrs = field_parser(ele, item[:fields]).merge!(common_attrs)
+             @results << Result.new(name, attrs, klass.domain)
+          end
+        end
+
+        @results
       end
 
       private 
@@ -117,52 +137,17 @@ module Raspar
       #  element to eval proc else html ele return and assign to 
       #  attribute.
       #- If process is false then :value option not going to evaluate.
-      def process_ele(klass, ele, opts)
+      def process_ele(ele, opts)
         val = opts[:attr] ? ele[opts[:attr]] : ele.content
         val.strip! if val
-        
+
         if opts[:eval]
-          return opts[:eval].is_a?(Symbol) ? klass.send(opts[:eval], val, ele) : opts[:eval].call(val, ele)
+          return opts[:eval].is_a?(Symbol) ? self.send(opts[:eval], val, ele) : opts[:eval].call(val, ele)
         end
 
         val
       end
 
-      def _define_field_(name)
-        class_eval <<-METHOD, __FILE__, __LINE__ + 1
-          def #{name}
-            @attributes[:#{name}]
-          end
-
-          def #{name}=(val)
-            @attributes[:#{name}] = val 
-          end
-        METHOD
-      end
-
-    end
-
-    module InstanceMethods
-      attr_reader :doc, :attributes
-
-      def process(doc, ele)
-        klass = self.class
-        @attributes = klass.field_parser(self, ele, klass.fields)
-        @attributes.merge!(klass.field_parser(self, doc, klass.common_fields))
-        self
-      end
-
-      def to_h
-        @attributes
-      end
-
-      def [](field)
-        @attributes[field]
-      end
-
-      def method_missing(name, *args, &block)
-        @attributes[name]
-      end
 
     end
 
