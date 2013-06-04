@@ -5,11 +5,11 @@ module Raspar
     include Parser::ClassMethods
 
     attr_accessor :domain, :domain_url, 
-      :common_fields, :item_containers, :_current_container_
+      :common_attrs, :collections, :_current_container_
 
     def initialize
-      @common_fields = {}
-      @item_containers = {}
+      @common_attrs = {}
+      @collections = {}
     end
 
     def parse(html)
@@ -19,16 +19,16 @@ module Raspar
     def self.register(url, selector_map, helper_module = nil)
       dp =  self.new
 
-      if selector_map[:common_fields]
-        selector_map[:common_fields].each { |field, opts| dp.field(field, opts) }
+      if selector_map[:common_attrs]
+        selector_map[:common_attrs].each { |attr, opts| dp.attr(attr, opts) }
       end
 
-      if selector_map[:item_containers]
-        selector_map[:item_containers].each do |name, item_opts|
-          dp.item_containers[name] = { :select => item_opts[:select], :fields => {} }
+      if selector_map[:collections]
+        selector_map[:collections].each do |name, collection_opts|
+          dp.collections[name] = { :select => collection_opts[:select], :attrs => {} }
 
           dp._current_container_ = name.to_sym
-          item_opts[:fields].each { |field, opts| dp.field(field, opts) } 
+          collection_opts[:attrs].each { |attr, opts| dp.attr(attr, opts) } 
           dp._current_container_ = nil
         end
       end

@@ -9,16 +9,14 @@ class CCode
 
   domain 'http://www.exchange-rate.com'
 
-  item :currency_code, 'table[cellpadding="2"] tr:gt(1)' do
-    field :country,  'td:nth-child(1)'
-    field :currency, 'td:nth-child(2)'
-    field :code,     'td:nth-child(3)'
+  collection :currency_code, 'table[cellpadding="2"] tr:gt(1)' do
+    attr :country,  'td:nth-child(1)'
+    attr :currency, 'td:nth-child(2)'
+    attr :code,     'td:nth-child(3)'
   end
 end
 
 url = 'http://www.exchange-rate.com/currency-list.html' 
-page = open(@url).read
+page = open(url).read
 
-Raspar.parse(url, page).each do |i|
-  pp i.attributes
-end
+Raspar.parse(url, page).each {|i| pp i }

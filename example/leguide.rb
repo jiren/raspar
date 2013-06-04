@@ -11,23 +11,23 @@ class Leguide
 
   domain 'http://www.leguide.com'
 
-  #External fields
-  field :name, '.block_bpu_feature .p b'
-  field :specifications, '#page2', :eval => :build_specification
+  #External attrs
+  attr :name, '.block_bpu_feature .p b'
+  attr :specifications, '#page2', :eval => :build_specification
 
-  item :product, '.offers_list li' do
-    field :alt_name,       '.gopt.offer.t'
-    field :image,          '.lg_photo img', :attr => 'src'
-    field :price,          '.price .euro.gopt'
-    field :orignal_price,  '.price .barre'
-    field :desc,           '.gopt.description,.info .description'
-    field :vendor,         '.name a'
-    field :availability,   '.av', :attr => 'data-value', :eval => DATA_PROC
-    field :delivery_time,  '.dv', :attr => 'data-value', :eval => DATA_PROC
-    field :shipping_price, '.delivery.gopt', :eval => SHIPPING_PROC
+  collection :product, '.offers_list li' do
+    attr :alt_name,       '.gopt.offer.t'
+    attr :image,          '.lg_photo img', :attr => 'src'
+    attr :price,          '.price .euro.gopt'
+    attr :orignal_price,  '.price .barre'
+    attr :desc,           '.gopt.description,.info .description'
+    attr :vendor,         '.name a'
+    attr :availability,   '.av', :attr => 'data-value', :eval => DATA_PROC
+    attr :delivery_time,  '.dv', :attr => 'data-value', :eval => DATA_PROC
+    attr :shipping_price, '.delivery.gopt', :eval => SHIPPING_PROC
   end
 
-  #For External field define class method because it evalute only once for all object in sigle html doc.
+  #For External attr define class method because it evalute only once for all object in sigle html doc.
   def build_specification(val, ele)
     attrs = {}
     ele.search('li').each do |li|
@@ -36,7 +36,7 @@ class Leguide
     attrs
   end
 
-  #For normal field use instance method 
+  #For normal attr use instance method 
   def parse_price(val, ele)
     val.gsub(/[ ,]/, ' ' => '', ',' => '.')
   end
@@ -49,9 +49,7 @@ p ARGV[0] || url
 #page = open(ARGV[0] || url).read().gsub(/[[:cntrl:]@]/, '')
 page = open(ARGV[0] || url).read()
 
-Raspar.parse(url, page).collect do |i|
-  i.class.field_names.each do |field|
-    p "%-20s: %s" % [field, i[field] ]
-  end
+Raspar.parse(url, page).each do |o|
+  pp o
   p "*"*40  
 end

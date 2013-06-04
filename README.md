@@ -1,14 +1,26 @@
 Raspar - scraping library
 =========================
 
-Raspar is a scraping library which help to map html elements to ruby object using css or xpath selector.Using this library user can define multiple parser for different websites and it select scraper accoriding to input html page url.Also user can add parser dynamically.
+Raspar is a html parsing library which help to map html elements to ruby object using 'css' or 'xpath' selector.Using this library user can define multiple parser for different websites and it select parser according to input html page url.
 
 Usage
 =====
 
 ```ruby
   
-  Rapser.parse(url, html) // This will return parsed result object array.
+  result = Rapsar.parse(url, html) #This will return parsed result object array.
+
+  #Result
+  [
+    #<Raspar::Result:0x007ffc91e4d640
+      @attrs={:name=>"Test1", :price=>"10", :image=>"1", :desc=>"Description"},
+      @domain="example.com",
+      @name=:product>,
+    #<Raspar::Result:0x007ffc91e57be0
+      @attrs={:name=>"Test2", :price=>"20", :image=>"2", :desc=>"Description"},
+      @domain="example.com",
+      @name=:product>
+   ]
 
 ```
 
@@ -60,21 +72,21 @@ class SampleParser
 
   domain 'http://sample.com'
 
-  field :desc, '.desc', :eval => :format_desc
+  attr :desc, '.desc', :eval => :format_desc
 
   item :product, '.item,span.second' do
-    field :image_url, 'img', :attr => 'src', :eval => :make_image_url
-    field :name,  'span:first'
-    field :price, 'span.price', :eval => Proc.new{|price, ele| price.to_i} 
-    field :price_map do |text, ele|
+    attr :image_url, 'img', :attr => 'src', :eval => :make_image_url
+    attr :name,  'span:first'
+    attr :price, 'span.price', :eval => Proc.new{|price, ele| price.to_i} 
+    attr :price_map do |text, ele|
       val = ele.search('span').collect{|s| s.content.strip}
       {val[0] => val[1].to_f}
     end
   end
 
   item :offer, '.offer' do
-    field :name, '.name'
-    field :discount, '.discount' do |text, ele|
+    attr :name, '.name'
+    attr :discount, '.discount' do |text, ele|
       test.split('%').first.to_f
     end
   end
@@ -95,30 +107,29 @@ class SampleParser
 end
 ```
 
-- Include 'Raspar' to class
-- Add domain url using 'domain' method. This will help selecting scraper according to url.
-- Define field which is going to parse. First argument is 'css' selector or 'xpath'. Second argument contain option.
+- 'domain' method register parser for input domain value so raspar can differentiate parser at runtime.
+- Define attr which is going to parse. First argument is 'css' selector or 'xpath'. Second argument contain option.
   - Valid options are :attr, :eval.
   - :attr is selecting particular attribute for html element. In example for image, select image url using :attr => 'src'
-  - :eval is use to post process field value. It can be proc, method or block. Each method, proc or block use for eval has two argument, first is html element text and second is html element as a Nokogiri doc.  
-  - if :eval is not define then parser will return text selected html element.
-- If your page has multiple type of objects then define using item block. In above example '.item' and 'span.second' are product while '.offer' element contain offer detail.
-- In html page some of attributes are common which is not reside under items. In example we want description should be added to all the parse item then add option :common => true
+  - :eval is use to post process attr value. It can be proc, method or block. Each method, proc or block use for eval has two argument, first is html element text and second is html element as a Nokogiri doc.  
+  - if :eval is not define then parser will return text of selected html element.
+- If your page has multiple type of objects or collections then define using 'collection' block. In above example '.item' and 'span.second' are product while '.offer' element contain offer detail.
+- In html page some of attributes are common which is not reside under particular collection and this attributes values are going to add for each parse object.
 
-To Dyanamicaly add Parser
+Dynamically add Parser
 =========================
 
 ```ruby
   
 domain  = 'http://www.sample.com'
 selector_map = {
-  :common_fields => {
+  :common_attrs => {
     :desc => {:select => '.desc'}
   },
-  :item_containers =>{
+  :collections =>{
     :item => {
       :select => 'div, span.second', 
-      :fields => {
+      :attrs => {
         :name =>  { :select => 'span:first'},
         :price =>  { :select => 'span.price', :eval => :parse_price},
         :image => { :select => 'img', :attr => 'src'}

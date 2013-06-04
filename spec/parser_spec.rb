@@ -9,7 +9,6 @@ module Raspar
     before do
       @site = 'http://sample.com'
       @domain = URI(@site).host
-      @parent_selector = 'div,span.second'
 
       Raspar.register(@site, SampleParser) unless Raspar.parser_list[@domain]
     end
@@ -30,8 +29,8 @@ module Raspar
       it "should have info" do
         SampleParser.info.should == {
                         :domain => @domain, 
-                        :item_containers => [:item, :offer], 
-                        :common_fields => [:desc, :specs] 
+                        :collections => [:product, :offer], 
+                        :common_attrs => [:desc, :specs] 
                       }
       end
 
@@ -49,11 +48,11 @@ module Raspar
         #Total parse objects
         parsed_objs.length.should == 5
 
-        parsed_objs.count{|o| o.name == :item}.should == 4
+        parsed_objs.count{|o| o.name == :product}.should == 4
         parsed_objs.count{|o| o.name == :offer}.should == 1
 
         count = 1
-        parsed_objs.select{|o| o.name == :item}.each do |o|
+        parsed_objs.select{|o| o.name == :product}.each do |o|
           o[:name].should == "Full Name: Test#{count}"
           o[:image].should == count.to_s
 

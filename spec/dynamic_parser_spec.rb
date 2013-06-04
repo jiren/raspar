@@ -11,13 +11,13 @@ module Raspar
       @domain = URI(@site).host
 
       selector_map = {
-        :common_fields => {
+        :common_attrs => {
           :desc => {:select => '.desc'}
         },
-        :item_containers =>{
-          :item => {
+        :collections =>{
+          :product => {
             :select => 'div.item, span.second', 
-            :fields => {
+            :attrs => {
               :name =>  { :select => 'span:first'},
               :price =>  { :select => 'span.price'},
               :image => { :select => 'img', :attr => 'src'}

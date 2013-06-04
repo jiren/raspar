@@ -2,11 +2,11 @@ module Raspar
   module Parser
 
     module ClassMethods
-      attr_reader :domain, :common_fields, :item_containers
+      attr_reader :domain, :common_attrs, :collections
 
       def _init_parser_
-        @common_fields = {}
-        @item_containers = {}
+        @common_attrs = {}
+        @collections = {}
       end
 
       #
@@ -18,7 +18,7 @@ module Raspar
       #   opts = {:eval => :parse_name, :attr => 'name', :select => ['.name']}
       # name, {:eval => :parse_name, :attr => 'name'} 
       #   opts = {:eval => :parse_name, :attr => 'name', :select => nil}
-      def field(name, select = nil, opts = {}, &block)
+      def attr(name, select = nil, opts = {}, &block)
         if select.is_a?(Hash)
           opts = select
         else
@@ -38,19 +38,18 @@ module Raspar
         opts[:eval] = opts[:eval].to_sym if opts[:eval].is_a?(String)
         opts[:eval] = block if block_given?
 
-        #opts[:common] ? @common_fields[name.to_sym] = opts : @fields[name.to_sym] = opts
         if @_current_container_
-          @item_containers[@_current_container_][:fields][name.to_sym] = opts
+          @collections[@_current_container_][:attrs][name.to_sym] = opts
         else
-          @common_fields[name.to_sym] = opts
+          @common_attrs[name.to_sym] = opts
         end
       end
 
-      def item(item_name, select, &block)
-        item_name = item_name.to_sym
-        @item_containers[item_name] = { :select => select, :fields => {} } 
+      def collection(collection_name, select, &block)
+        collection_name = collection_name.to_sym
+        @collections[collection_name] = { :select => select, :attrs => {} } 
 
-        @_current_container_ = item_name
+        @_current_container_ = collection_name
         yield
         @_current_container_ = nil
       end
@@ -71,42 +70,42 @@ module Raspar
         self.new.process(html)
       end
 
-      def fields
-        {:item_containers => @item_containers, :common_fields => @common_fields}
+      def attrs
+        {:collections => @collections, :common_attrs => @common_attrs}
       end
 
       def info
-        {:domain => @domain, :item_containers => @item_containers.keys, :common_fields => @common_fields.keys}
+        {:domain => @domain, :collections => @collections.keys, :common_attrs => @common_attrs.keys}
       end
     end
 
     module InstanceMethods
       attr_reader :attributes
 
-      #Parse doc: html node accroding to field selector 
+      #Parse doc: html node accroding to attr selector 
       #If selector is :self then input doc is a selected doc
       #Select first 
-      def field_parser(doc, field_map)
+      def attr_parser(doc, attr_map)
         attrs = {}
        
-        field_map.each do |field_name, opts|
+        attr_map.each do |attr_name, opts|
           ele = doc
 
           if opts[:select]
             if opts[:as] == :array
-              attrs[field_name] = doc.search(opts[:select]).collect{|e| process_ele(e, opts)}
+              attrs[attr_name] = doc.search(opts[:select]).collect{|e| process_ele(e, opts)}
             else
               opts[:select].each do |s|
                 ele = doc.search(s).first
                 break if ele
               end
-              attrs[field_name] = process_ele(ele, opts) if ele
+              attrs[attr_name] = process_ele(ele, opts) if ele
             end
           else
-            attrs[field_name] = process_ele(ele, opts) if ele
+            attrs[attr_name] = process_ele(ele, opts) if ele
           end
 
-          #attrs[opts[:as]] ||= attrs[field_name] if opts[:as]
+          #attrs[opts[:as]] ||= attrs[attr_name] if opts[:as]
         end
 
         attrs
@@ -117,11 +116,11 @@ module Raspar
         doc = Nokogiri::HTML(html)
         klass = self.class unless klass
 
-        common_attrs = field_parser(doc, klass.common_fields)
+        common_attrs = attr_parser(doc, klass.common_attrs)
 
-        klass.item_containers.each do |name, item|
-          doc.search(item[:select]).each do |ele|
-             attrs = field_parser(ele, item[:fields]).merge!(common_attrs)
+        klass.collections.each do |name, collection|
+          doc.search(collection[:select]).each do |ele|
+             attrs = attr_parser(ele, collection[:attrs]).merge!(common_attrs)
              @results << Result.new(name, attrs, klass.domain)
           end
         end

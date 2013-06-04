@@ -3,24 +3,24 @@ class SampleParser
 
   domain 'http://sample.com'
 
-  field :desc, '.desc', :common => true, :eval => :full_desc
-  field :specs, '.specs li', :common => true, :as => :array, :eval => :format_specs
+  attr :desc, '.desc', :common => true, :eval => :full_desc
+  attr :specs, '.specs li', :common => true, :as => :array, :eval => :format_specs
 
-  item :item, '.item,span.second' do
-    field :image, 'img', :attr => 'src'
-    field :image_url, 'img', :attr => 'src', :eval => :make_image_url
-    field :name,  'span:first, .name', :eval => :full_name
-    field :price, '.price', :eval => Proc.new{|i| i.to_i}
-    field :all_text 
-    field :price_map do |text, ele|
+  collection :product, '.item,span.second' do
+    attr :image, 'img', :attr => 'src'
+    attr :image_url, 'img', :attr => 'src', :eval => :make_image_url
+    attr :name,  'span:first, .name', :eval => :full_name
+    attr :price, '.price', :eval => Proc.new{|i| i.to_i}
+    attr :all_text 
+    attr :price_map do |text, ele|
       val = ele.search('span').collect{|s| s.content.strip}
       {val[0] => val[1].to_f}
     end
   end
 
-  item :offer, '.offer' do
-    field :name, '.name'
-    field :percentage, '.percentage'
+  collection :offer, '.offer' do
+    attr :name, '.name'
+    attr :percentage, '.percentage'
   end
 
   def full_name(val, ele)
