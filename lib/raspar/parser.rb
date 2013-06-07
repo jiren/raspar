@@ -138,7 +138,7 @@ module Raspar
       #  attribute.
       #- If process is false then :value option not going to evaluate.
       def process_ele(ele, opts)
-        val = opts[:attr] ? ele[opts[:attr]] : ele.content
+        val = opts[:prop] ? ele[opts[:prop]] : ele.content
         val.strip! if val
 
         if opts[:eval]

@@ -75,7 +75,7 @@ class SampleParser
   attr :desc, '.desc', :eval => :format_desc
 
   item :product, '.item,span.second' do
-    attr :image_url, 'img', :attr => 'src', :eval => :make_image_url
+    attr :image_url, 'img', :prop => 'src', :eval => :make_image_url
     attr :name,  'span:first'
     attr :price, 'span.price', :eval => Proc.new{|price, ele| price.to_i} 
     attr :price_map do |text, ele|
@@ -107,10 +107,10 @@ class SampleParser
 end
 ```
 
-- 'domain' method register parser for input domain value so raspar can differentiate parser at runtime.
-- Define attr which is going to parse. First argument is 'css' selector or 'xpath'. Second argument contain option.
-  - Valid options are :attr, :eval.
-  - :attr is selecting particular attribute for html element. In example for image, select image url using :attr => 'src'
+- 'domain' method register parser for given domain value so raspar can differentiate parser at runtime.
+- Define 'attr' which is going to parse. First argument is 'css' or 'xpath' selector. Second argument contain options.
+  - Valid options are :field, :eval.
+  - :porp is selecting particular property/attribute for html element. In example for image, select image url using :prop => 'src'
   - :eval is use to post process attr value. It can be proc, method or block. Each method, proc or block use for eval has two argument, first is html element text and second is html element as a Nokogiri doc.  
   - if :eval is not define then parser will return text of selected html element.
 - If your page has multiple type of objects or collections then define using 'collection' block. In above example '.item' and 'span.second' are product while '.offer' element contain offer detail.
@@ -132,7 +132,7 @@ selector_map = {
       :attrs => {
         :name =>  { :select => 'span:first'},
         :price =>  { :select => 'span.price', :eval => :parse_price},
-        :image => { :select => 'img', :attr => 'src'}
+        :image => { :select => 'img', :prop => 'src'}
       }
     }
   }

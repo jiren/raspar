@@ -7,8 +7,8 @@ class SampleParser
   attr :specs, '.specs li', :common => true, :as => :array, :eval => :format_specs
 
   collection :product, '.item,span.second' do
-    attr :image, 'img', :attr => 'src'
-    attr :image_url, 'img', :attr => 'src', :eval => :make_image_url
+    attr :image, 'img', :prop => 'src'
+    attr :image_url, 'img', :prop => 'src', :eval => :make_image_url
     attr :name,  'span:first, .name', :eval => :full_name
     attr :price, '.price', :eval => Proc.new{|i| i.to_i}
     attr :all_text 

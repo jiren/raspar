@@ -37,13 +37,13 @@ selector_map = {
     :product =>{
       :select => '.offers_list li',
       :attrs => {
-        :image          => { :select => 'img', :attr => 'src'},
+        :image          => { :select => 'img', :prop => 'src'},
         :price          => { :select => '.price .euro.gopt', :eval => :parse_price},
         :orignal_price  => { :select => '.price .barre', :eval => :parse_price},
         :desc           => { :select => '.gopt.description,.info .description'},
         :vendor         => { :select => '.name a' },
-        :availability   => { :select => '.av', :attr => 'data-value', :eval => :data_attr_parse},
-        :delivery_time  => { :select => '.dv', :attr => 'data-value', :eval => :data_attr_parse},
+        :availability   => { :select => '.av', :prop => 'data-value', :eval => :data_attr_parse},
+        :delivery_time  => { :select => '.dv', :prop => 'data-value', :eval => :data_attr_parse},
         :shipping_price => { :select => '.delivery.gopt'}
       }
     }

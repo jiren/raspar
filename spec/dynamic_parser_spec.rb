@@ -20,7 +20,7 @@ module Raspar
             :attrs => {
               :name =>  { :select => 'span:first'},
               :price =>  { :select => 'span.price'},
-              :image => { :select => 'img', :attr => 'src'}
+              :image => { :select => 'img', :prop => 'src'}
             }
           }
         }
