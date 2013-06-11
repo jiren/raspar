@@ -74,7 +74,7 @@ class SampleParser
 
   attr :desc, '.desc', :eval => :format_desc
 
-  item :product, '.item,span.second' do
+  collection :product, '.item,span.second' do
     attr :image_url, 'img', :prop => 'src', :eval => :make_image_url
     attr :name,  'span:first'
     attr :price, 'span.price', :eval => Proc.new{|price, ele| price.to_i} 
@@ -84,7 +84,7 @@ class SampleParser
     end
   end
 
-  item :offer, '.offer' do
+  collection :offer, '.offer' do
     attr :name, '.name'
     attr :discount, '.discount' do |text, ele|
       test.split('%').first.to_f
