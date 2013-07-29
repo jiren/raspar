@@ -147,9 +147,6 @@ module Raspar
 
         val
       end
-
-
     end
-
   end
 end

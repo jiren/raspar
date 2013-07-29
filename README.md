@@ -116,6 +116,30 @@ end
 - If your page has multiple type of objects or collections then define using 'collection' block. In above example '.item' and 'span.second' are product while '.offer' element contain offer detail.
 - In html page some of attributes are common which is not reside under particular collection and this attributes values are going to add for each parse object.
 
+Add Parser in different way
+===========================
+It takes only one argument domain url and block.
+
+```ruby
+
+Raspar.add('http://example.com') do
+  attr :desc, '.desc', :eval => :format_desc
+
+  collection :product, '.item,span.second' do
+    attr :image_url, 'img', :prop => 'src', :eval => :make_image_url
+    attr :name,  'span:first'
+    attr :price, 'span.price', :eval => Proc.new{|price, ele| price.to_i} 
+    attr :price_map do |text, ele|
+      val = ele.search('span').collect{|s| s.content.strip}
+      {val[0] => val[1].to_f}
+    end
+  end
+end
+
+
+```
+
+
 Dynamically add Parser
 =========================
 
@@ -144,7 +168,7 @@ module ParserHelper
   end
 end
 
-Raspar.add_parsing_map(domain, selector_map, ParserHelper) //Add parser
+Raspar.add(domain, selector_map, ParserHelper) //Add parser
 
 ```
 

@@ -10,14 +10,14 @@ module Raspar
       @site = 'http://sample.com'
       @domain = URI(@site).host
 
-      Raspar.register(@site, SampleParser) unless Raspar.parser_list[@domain]
+      Raspar.register(@site, SampleParser) unless Raspar.parsers[@domain]
     end
 
     #On load SampleParser class
     describe 'onload' do
 
       it "should register SampleParser to Raspar parser list" do
-        Raspar.parser_list.should include({@domain => SampleParser})
+        Raspar.parsers.should include({@domain => SampleParser})
 
         SampleParser.domain.should == @domain
       end

@@ -17,7 +17,13 @@ module Raspar
     base._init_parser_
   end
 
+  class RasparException < Exception; end
+
   class << self
+
+    def _init
+      @parsers = {}
+    end
 
     #Register parser class and domain
     #
@@ -25,37 +31,60 @@ module Raspar
     # Raspar::Base.register('http://test.com', TestParser)
     #
     def register(domain, klass)
-      @parser_list ||= {} 
-      (URI(domain).host || domain).tap{ |host| @parser_list[host] = klass }
+      @parsers ||= {} 
+      (URI(domain).host || domain).tap{ |host| @parsers[host] = klass }
     end
 
     # clear parser list
     def clear
-      @parser_list = {}
+      @parsers = {}
     end
 
     def remove(domain)
-      @parser_list.delete(URI(domain).host) if @parser_list
+      @parsers.delete(URI(domain).host) if @parsers
     end
 
-    def parser_list
-      @parser_list
+    def parsers
+      @parsers
+    end
+
+    def exist?(url)
+      @parsers.include?(URI(url).host)
     end
 
     def parse(url, html)
       host = URI(url).host
-      if @parser_list[host]
-        @parser_list[host].parse(html)
+      if @parsers[host]
+        @parsers[host].parse(html)
       else
         puts "No parser define for #{host}"
         nil
       end
     end
 
-    def add_parsing_map(url, selector_map, helper_module = nil)
-      DynamicParser.register(url, selector_map, helper_module)
+    def add(url, selector_map = nil, helper_module = nil, &block)
+      if self.exist?(url)
+        raise RasparException.new("Parser already exist for '#{url}'")
+      end
+
+      if selector_map 
+        return DynamicParser.register(url, selector_map, helper_module)
+      end
+
+      klass_name = URI.parse(url).host.gsub(/\W/, '')
+      klass_name = klass_name[0].upcase + klass_name[1..-1]
+
+      klass = Class.new
+      klass.send :include, Raspar
+      klass.domain(url)
+      klass.instance_eval(&block) if block_given?
+      Object.const_set(klass_name, klass)
+
+      klass
     end
 
   end
 
+  #Init Raspar parser list
+  self._init
 end

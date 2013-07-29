@@ -26,13 +26,13 @@ module Raspar
         }
       }
 
-      @dynmaic_parser = Raspar.add_parsing_map(@site, selector_map)
+      @dynmaic_parser = Raspar.add(@site, selector_map)
     end
 
     describe '#onload' do
 
       it "should register DynamicParser to Raspar parser list" do
-        Raspar.parser_list[@domain].class.should == Raspar::DynamicParser
+        Raspar.parsers[@domain].class.should == Raspar::DynamicParser
 
         @dynmaic_parser.domain.should == @domain
       end

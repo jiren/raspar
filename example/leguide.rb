@@ -2,6 +2,7 @@ require 'rubygems'
 require 'bundler/setup'
 require 'open-uri'
 require 'raspar'
+require 'pp'
 
 class Leguide
   include Raspar
