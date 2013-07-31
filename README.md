@@ -132,7 +132,7 @@ Raspar.add('http://example.com') do
   attr :desc, '.desc', :eval => :format_desc
 
   collection :product, '.item,span.second' do
-    attr :image_url, 'img', :prop => 'src', :eval => :make_image_url
+    attr :image_url, 'img', :prop => 'src'
     attr :name,  'span:first'
     attr :price, 'span.price', :eval => Proc.new{|price, ele| price.to_i} 
     attr :price_map do |text, ele|
@@ -140,6 +140,11 @@ Raspar.add('http://example.com') do
       {val[0] => val[1].to_f}
     end
   end
+  
+  def format_desc(text, ele)
+    "Desc: #{text.downcase}"
+  end
+  
 end
 
 
