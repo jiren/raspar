@@ -26,6 +26,7 @@ module Raspar
         }
       }
 
+      Raspar.clear_parser_list
       @dynmaic_parser = Raspar.add(@site, selector_map)
     end
 

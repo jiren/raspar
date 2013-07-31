@@ -50,7 +50,7 @@ selector_map = {
   }
 }
 
-Raspar.add_parsing_map(domain, selector_map, ParserHelper)
+Raspar.add(domain, selector_map, ParserHelper)
 
 url = 'http://www.leguide.com/sb/bp/5010500/hotpoint_ariston/ECO9F_149_FRS/55743410.htm'
 page = open(url).read()

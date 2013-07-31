@@ -1,10 +1,19 @@
-Raspar - scraping library
-=========================
+## Raspar - scraping library
 
 Raspar is a html parsing library which help to map html elements to ruby object using 'css' or 'xpath' selector.Using this library user can define multiple parser for different websites and it select parser according to input html page url.
 
-Usage
-=====
+
+## Installation
+
+Add this line to your application's Gemfile:
+
+    gem 'raspar', :git => 'git://github.com:jiren/raspar.git'
+
+And then execute:
+
+    $ bundle
+
+## Usage
 
 ```ruby
   
@@ -24,11 +33,9 @@ Usage
 
 ```
 
-Example
-=======
+## Example
 
-Sample HTML
------------
+### Sample HTML
 
 ```html
 <!DOCTYPE html>
@@ -63,8 +70,7 @@ Sample HTML
 ```
 
 
-Parser for above HTML 
----------------------
+#### Parser for above HTML 
 
 ```ruby
 class SampleParser
@@ -116,8 +122,8 @@ end
 - If your page has multiple type of objects or collections then define using 'collection' block. In above example '.item' and 'span.second' are product while '.offer' element contain offer detail.
 - In html page some of attributes are common which is not reside under particular collection and this attributes values are going to add for each parse object.
 
-Add Parser in different way
-===========================
+### Add Parser in different way
+
 It takes only one argument domain url and block.
 
 ```ruby
@@ -140,8 +146,7 @@ end
 ```
 
 
-Dynamically add Parser
-=========================
+### Dynamically add Parser
 
 ```ruby
   
@@ -175,10 +180,10 @@ Raspar.add(domain, selector_map, ParserHelper) //Add parser
 For post processing user can add parser helper, but it is not mandatory.
 
 
-Contributing
-------------
+## Contributing
+
 Please send me a pull request so that this can be improved.
 
-License
--------
+## License
+
 This is released under the MIT license.

@@ -16,13 +16,13 @@ describe Raspar do
 
   it "should clear registered domains" do
     Raspar.register(@site, TestParser)
-    Raspar.clear
+    Raspar.clear_parser_list
 
     Raspar.parsers.size.should == 0
   end
 
   it "should able to remove parser from the registered list" do
-    Raspar.clear
+    Raspar.clear_parser_list
     Raspar.register(@site, TestParser)
 
     Raspar.remove(@site)

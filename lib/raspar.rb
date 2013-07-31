@@ -36,7 +36,7 @@ module Raspar
     end
 
     # clear parser list
-    def clear
+    def clear_parser_list
       @parsers = {}
     end
 
@@ -71,16 +71,18 @@ module Raspar
         return DynamicParser.register(url, selector_map, helper_module)
       end
 
-      klass_name = URI.parse(url).host.gsub(/\W/, '')
-      klass_name = klass_name[0].upcase + klass_name[1..-1]
+      klass_name = URI(url).host
+                           .split('.')
+                           .reject{|w| w == 'www'}
+                           .collect{|w| w[0].upcase + w[1..-1] }
+                           .join
+                           .gsub(/\W/, '')
 
       klass = Class.new
       klass.send :include, Raspar
       klass.domain(url)
-      klass.instance_eval(&block) if block_given?
+      klass.class_exec(&block) if block_given?
       Object.const_set(klass_name, klass)
-
-      klass
     end
 
   end
