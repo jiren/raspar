@@ -1,6 +1,9 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'open-uri'
+require 'coveralls'
+
+Coveralls.wear!
 
 RSpec.configure do |config|
   config.color_enabled = true
