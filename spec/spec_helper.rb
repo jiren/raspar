@@ -1,6 +1,14 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'open-uri'
+require 'simplecov'
+
+SimpleCov.start do
+  add_filter '/spec/'
+  add_filter '/example/'
+  add_group 'gem', 'lib'
+end
+
 require 'coveralls'
 
 Coveralls.wear!
