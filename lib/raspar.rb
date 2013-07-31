@@ -82,6 +82,8 @@ module Raspar
       klass.send :include, Raspar
       klass.domain(url)
       klass.class_exec(&block) if block_given?
+
+      klass_name = 'R' + klass_name if Object.const_defined?(klass_name)
       Object.const_set(klass_name, klass)
     end
 
