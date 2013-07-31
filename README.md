@@ -7,7 +7,7 @@ Raspar is a html scraping library which help to map html elements to ruby object
 
 Add this line to your application's Gemfile:
 
-    gem 'raspar', :git => 'git://github.com:jiren/raspar.git'
+    gem 'raspar', :git => 'git://github.com/jiren/raspar.git'
 
 And then execute:
 
