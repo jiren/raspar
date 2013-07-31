@@ -2,6 +2,9 @@
 
 Raspar is a html scraping library which help to map html elements to ruby object using 'css' or 'xpath' selector.Using this library user can define multiple parser for different websites and it select parser according to input html page url.
 
+[![Build Status](https://travis-ci.org/jiren/raspar.png?branch=master)](https://travis-ci.org/jiren/raspar)
+ [![Coverage Status](https://coveralls.io/repos/jiren/raspar/badge.png?branch=master)](https://coveralls.io/r/jiren/raspar?branch=master)
+
 
 ## Installation
 
