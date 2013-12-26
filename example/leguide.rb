@@ -16,13 +16,12 @@ class Leguide
   attr :name, '.block_bpu_feature .p b'
   attr :specifications, '#page2', :eval => :build_specification
 
-  collection :product, '.offers_list li' do
-    attr :alt_name,       '.gopt.offer.t'
-    attr :image,          '.lg_photo img', :prop => 'src'
-    attr :price,          '.price .euro.gopt'
-    attr :orignal_price,  '.price .barre'
+  collection :product, '.offers_item' do
+    attr :alt_name,       '.gopt.l'
+    attr :image,          '.lg_photo img, .img_container img', :prop => 'src'
+    attr :price,          '.gopt .prices'
+    attr :orignal_price,  '.gopt.old_price'
     attr :desc,           '.gopt.description,.info .description'
-    attr :vendor,         '.name a'
     attr :availability,   '.av', :prop => 'data-value', :eval => DATA_PROC
     attr :delivery_time,  '.dv', :prop => 'data-value', :eval => DATA_PROC
     attr :shipping_price, '.delivery.gopt', :eval => SHIPPING_PROC

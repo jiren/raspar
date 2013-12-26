@@ -4,7 +4,7 @@ require 'open-uri'
 require 'raspar'
 require 'pp'
 
-class CCode
+class CountryCode
   include Raspar
 
   domain 'http://www.exchange-rate.com'

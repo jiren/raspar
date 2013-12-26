@@ -6,3 +6,7 @@ pkg/*
 1.html
 test.rn
 *.DS_Store
+/coverage
+test.rb
+x.rb
+/tmp
