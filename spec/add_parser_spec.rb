@@ -27,26 +27,26 @@ describe 'Add Parser' do
   end
 
   it 'should register parser and parse data' do
-    Raspar.parsers.should include({@domain => @parser_class})
+    expect(Raspar.parsers).to include({@domain => @parser_class})
   end
 
   it "should have info" do
-    @parser_class.info.should == {
+    expect(@parser_class.info).to eq({
       :domain => @domain, 
       :collections => [:products], 
       :common_attrs => [:desc] 
-    }
+    })
   end
 
   it "should parse html and create object" do
     parsed_objs = Raspar.parse(@site, FAKE_PAGE)
 
-    parsed_objs[:products].length.should == 4
+    expect(parsed_objs[:products].length).to eq(4)
     count = 1
     parsed_objs[:products].each do |o|
-      o[:name].should == "Full Name: Test#{count}"
-      o[:price].should == (count * 10)
-      o[:desc].should == "Description"
+      expect(o[:name]).to eq("Full Name: Test#{count}")
+      expect(o[:price]).to eq(count * 10)
+      expect(o[:desc]).to eq("Description")
 
       count = count + 1
     end

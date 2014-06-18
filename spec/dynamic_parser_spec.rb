@@ -33,9 +33,9 @@ module Raspar
     describe '#onload' do
 
       it "should register DynamicParser to Raspar parser list" do
-        Raspar.parsers[@domain].class.should == Raspar::DynamicParser
+        expect(Raspar.parsers[@domain].class).to eq(Raspar::DynamicParser)
 
-        @dynmaic_parser.domain.should == @domain
+        expect(@dynmaic_parser.domain).to eq(@domain)
       end
 
     end
@@ -48,24 +48,24 @@ module Raspar
 
         count = 1
         parsed_objs[:products].each do |o|
-          o.class.should == Raspar::Result
+          expect(o.class).to eq(Raspar::Result)
 
-          o[:name].should == "Test#{count}"
-          o[:image].should == count.to_s
+          expect(o[:name]).to eq("Test#{count}")
+          expect(o[:image]).to eq(count.to_s)
 
           #Price should eval using proc given in option which convert string value
           #to integer
-          o[:price].should == (count * 10).to_s
+          expect(o[:price]).to eq((count * 10).to_s)
 
           #External Field check
-          o[:desc].should == "Description"
+          expect(o[:desc]).to eq("Description")
           count = count + 1
         end
 
       end
 
       it 'should return absoulte url' do
-        @dynmaic_parser.absolute_url('/test').should == @site + '/test'
+        expect(@dynmaic_parser.absolute_url('/test')).to eq(@site + '/test')
       end
 
     end

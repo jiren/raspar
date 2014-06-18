@@ -9,16 +9,16 @@ describe Raspar do
   end
 
   it "should add domain to register parser list" do
-    Raspar.register(@site, TestParser).should == @host
-    Raspar.parsers.should include({@host => TestParser})
-    Raspar.parsers.size.should > 0
+    expect(Raspar.register(@site, TestParser)).to eq(@host)
+    expect(Raspar.parsers).to include({@host => TestParser})
+    expect(Raspar.parsers.size).to be > 0
   end
 
   it "should clear registered domains" do
     Raspar.register(@site, TestParser)
     Raspar.clear_parser_list
 
-    Raspar.parsers.size.should == 0
+    expect(Raspar.parsers.size).to eq(0)
   end
 
   it "should able to remove parser from the registered list" do
@@ -27,7 +27,7 @@ describe Raspar do
 
     Raspar.remove(@site)
 
-    Raspar.parsers.should_not include(@host) 
+    expect(Raspar.parsers).not_to include(@host) 
   end
 end
 
