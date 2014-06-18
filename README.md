@@ -23,16 +23,17 @@ And then execute:
   result = Rapsar.parse(url, html) #This will return parsed result object array.
 
   #Result
-  [
+  { :products => [
     #<Raspar::Result:0x007ffc91e4d640
       @attrs={:name=>"Test1", :price=>"10", :image=>"1", :desc=>"Description"},
       @domain="example.com",
-      @name=:product>,
+      @name=:products>,
     #<Raspar::Result:0x007ffc91e57be0
       @attrs={:name=>"Test2", :price=>"20", :image=>"2", :desc=>"Description"},
       @domain="example.com",
-      @name=:product>
-   ]
+      @name=:products>
+    ] 
+   }
 
 ```
 
