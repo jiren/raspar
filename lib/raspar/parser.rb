@@ -50,7 +50,7 @@ module Raspar
         @collections[collection_name] = { :select => select, :attrs => {} } 
 
         @_current_container_ = collection_name
-        yield
+        yield if block_given?
         @_current_container_ = nil
       end
 

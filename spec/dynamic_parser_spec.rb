@@ -15,7 +15,7 @@ module Raspar
           :desc => {:select => '.desc'}
         },
         :collections =>{
-          :product => {
+          :products => {
             :select => 'div.item, span.second', 
             :attrs => {
               :name =>  { :select => 'span:first'},
@@ -44,10 +44,10 @@ module Raspar
 
       it "should parse html and create object" do
         parsed_objs = Raspar.parse(@site, FAKE_PAGE)
-        parsed_objs.length.should == 4
+        parsed_objs[:products] == 4
 
         count = 1
-        parsed_objs.each do |o|
+        parsed_objs[:products].each do |o|
           o.class.should == Raspar::Result
 
           o[:name].should == "Test#{count}"

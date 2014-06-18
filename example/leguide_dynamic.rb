@@ -1,6 +1,6 @@
 require 'rubygems'
+require 'rest_client'
 require 'bundler/setup'
-require 'open-uri'
 require 'raspar'
 require 'pp'
 
@@ -38,13 +38,9 @@ selector_map = {
       :select => '.offers_list li',
       :attrs => {
         :image          => { :select => 'img', :prop => 'src'},
-        :price          => { :select => '.price .euro.gopt', :eval => :parse_price},
-        :orignal_price  => { :select => '.price .barre', :eval => :parse_price},
+        :price          => { :select => '.gopt .prices', :eval => :parse_price},
         :desc           => { :select => '.gopt.description,.info .description'},
         :vendor         => { :select => '.name a' },
-        :availability   => { :select => '.av', :prop => 'data-value', :eval => :data_attr_parse},
-        :delivery_time  => { :select => '.dv', :prop => 'data-value', :eval => :data_attr_parse},
-        :shipping_price => { :select => '.delivery.gopt'}
       }
     }
   }
@@ -52,8 +48,9 @@ selector_map = {
 
 Raspar.add(domain, selector_map, ParserHelper)
 
-url = 'http://www.leguide.com/sb/bp/5010500/hotpoint_ariston/ECO9F_149_FRS/55743410.htm'
-page = open(url).read()
+url = 'http://www.leguide.com/electromenager.htm'
+p url
+page = RestClient.get(url).to_str
 
 Raspar.parse(url, page).each do |i|
   pp i

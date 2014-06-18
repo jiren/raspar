@@ -29,7 +29,7 @@ module Raspar
       it "should have info" do
         SampleParser.info.should == {
                         :domain => @domain, 
-                        :collections => [:product, :offer], 
+                        :collections => [:products, :offers, :related_products], 
                         :common_attrs => [:desc, :specs] 
                       }
       end
@@ -46,13 +46,14 @@ module Raspar
         parsed_objs = Raspar.parse(@site, FAKE_PAGE)
 
         #Total parse objects
-        parsed_objs.length.should == 5
+        parsed_objs.keys.length.should == 3
 
-        parsed_objs.count{|o| o.name == :product}.should == 4
-        parsed_objs.count{|o| o.name == :offer}.should == 1
+        parsed_objs[:products].length.should == 4
+        parsed_objs[:offers].length.should == 1
+        parsed_objs[:related_products].length.should == 1
 
         count = 1
-        parsed_objs.select{|o| o.name == :product}.each do |o|
+        parsed_objs[:products].each do |o|
           o[:name].should == "Full Name: Test#{count}"
           o[:image].should == count.to_s
 
@@ -73,7 +74,7 @@ module Raspar
           count = count + 1
         end
 
-        parsed_objs.select{|o| o.name == :offer}.each do |o|
+        parsed_objs[:offers].each do |o|
           o[:name].should == 'First Offer'
           o[:percentage].should == '10% off'
         end

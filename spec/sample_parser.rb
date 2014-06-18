@@ -6,7 +6,7 @@ class SampleParser
   attr :desc, '.desc', :common => true, :eval => :full_desc
   attr :specs, '.specs li', :common => true, :as => :array, :eval => :format_specs
 
-  collection :product, '.item,span.second' do
+  collection :products, '.item,span.second' do
     attr :image, 'img', :prop => 'src'
     attr :image_url, 'img', :prop => 'src', :eval => :make_image_url
     attr :name,  'span:first, .name', :eval => :full_name
@@ -18,9 +18,13 @@ class SampleParser
     end
   end
 
-  collection :offer, '.offer' do
+  collection :offers, '.offer' do
     attr :name, '.name'
     attr :percentage, '.percentage'
+  end
+
+  collection :related_products, 'ol.related_products' do
+    attr :name, 'li', as: :array
   end
 
   def full_name(val, ele)
@@ -86,6 +90,12 @@ FAKE_PAGE = %q{
     <span class="name">First Offer</span>
     <span class="percentage">10% off</span>
   </div>
+
+  <ol class="related_products">
+    <li> Product 1 </li>
+    <li> Product 2 </li>
+    <li> Product 3 </li>
+  </ol>
 
   </body>
   </html>

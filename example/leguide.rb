@@ -1,6 +1,6 @@
 require 'rubygems'
+require 'rest_client'
 require 'bundler/setup'
-require 'open-uri'
 require 'raspar'
 require 'pp'
 
@@ -43,11 +43,11 @@ class Leguide
 
 end
 
-url = 'http://www.leguide.com/sb/bp/5010500/hotpoint_ariston/ECO9F_149_FRS/55743410.htm'
 url = 'http://www.leguide.com/electromenager.htm'
+url = ARGV[0] || url
 p ARGV[0] || url
-#page = open(ARGV[0] || url).read().gsub(/[[:cntrl:]@]/, '')
-page = open(ARGV[0] || url).read()
+
+page = RestClient.get(url).to_str
 
 Raspar.parse(url, page).each do |o|
   pp o

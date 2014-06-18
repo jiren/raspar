@@ -8,7 +8,7 @@ describe 'Add Parser' do
     Raspar.add(@site) do
       attr :desc, '.desc', :common => true
 
-      collection :product, '.item,span.second' do
+      collection :products, '.item,span.second' do
         attr :name,  'span:first, .name', :eval => :full_name
         attr :price, '.price', :eval => Proc.new{|i| i.to_i}
       end
@@ -33,7 +33,7 @@ describe 'Add Parser' do
   it "should have info" do
     @parser_class.info.should == {
       :domain => @domain, 
-      :collections => [:product], 
+      :collections => [:products], 
       :common_attrs => [:desc] 
     }
   end
@@ -41,12 +41,9 @@ describe 'Add Parser' do
   it "should parse html and create object" do
     parsed_objs = Raspar.parse(@site, FAKE_PAGE)
 
-    parsed_objs.length.should == 4
-
-    parsed_objs.count{|o| o.name == :product}.should == 4
-
+    parsed_objs[:products].length.should == 4
     count = 1
-    parsed_objs.select{|o| o.name == :product}.each do |o|
+    parsed_objs[:products].each do |o|
       o[:name].should == "Full Name: Test#{count}"
       o[:price].should == (count * 10)
       o[:desc].should == "Description"

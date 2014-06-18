@@ -55,7 +55,7 @@ module Raspar
     def parse(url, html)
       host = URI(url).host
       if @parsers[host]
-        @parsers[host].parse(html)
+        @parsers[host].parse(html).group_by(&:name)
       else
         puts "No parser define for #{host}"
         nil
@@ -83,8 +83,7 @@ module Raspar
       klass.domain(url)
       klass.class_exec(&block) if block_given?
 
-      klass_name = 'R' + klass_name if Object.const_defined?(klass_name)
-      Object.const_set(klass_name, klass)
+      Raspar.const_set(klass_name, klass)
     end
 
   end

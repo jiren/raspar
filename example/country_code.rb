@@ -1,6 +1,6 @@
 require 'rubygems'
+require 'rest_client'
 require 'bundler/setup'
-require 'open-uri'
 require 'raspar'
 require 'pp'
 
@@ -17,6 +17,6 @@ class CountryCode
 end
 
 url = 'http://www.exchange-rate.com/currency-list.html' 
-page = open(url).read
+page = RestClient.get(url).to_str
 
 Raspar.parse(url, page).each {|i| pp i }

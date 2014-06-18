@@ -1,6 +1,6 @@
 require 'rubygems'
+require 'rest_client'
 require 'bundler/setup'
-require 'open-uri'
 require 'raspar'
 require 'pp'
 
@@ -12,6 +12,7 @@ class BestBuy
   collection :products, '.hproduct' do
     attr :image, '.image-col img', prop: 'src'
     attr :name, '.info-main .name'
+    attr :price, 'span[itemprop="price"]'
     attr :sku,  '.sku'
     attr :description, '.product-short-description li', as: :array
     attr :rating, 'span[itemprop="ratingValue"]', eval: ->(text, ele){ text.to_f }
@@ -19,9 +20,9 @@ class BestBuy
 
 end
 
-url = "http://www.bestbuy.com/site/promo/samsung-galaxy-s-4-and-note-3-115626"
-p ARGV[0] || url
-page = open(ARGV[0] || url).read()
+url = ARGV[0] || "http://www.bestbuy.com/site/promo/htc-one-offer-118429"
+p url
+page = RestClient.get(url).to_str
 
 Raspar.parse(url, page).each do |product|
   pp product
