@@ -1,6 +1,6 @@
 ## Raspar - scraping library
 
-Raspar is a html scraping library which help to map html elements to ruby object using 'css' or 'xpath' selector.Using this library user can define multiple parser for different websites and it select parser according to input html page url.
+Raspar is a html scraping library which help to map html elements to ruby object using 'css' or 'xpath' selector.Using this library user can define multiple parser for different websites, raspar can then select parser according to page url.
 
 [![Build Status](https://travis-ci.org/jiren/raspar.png?branch=master)](https://travis-ci.org/jiren/raspar)
  [![Coverage Status](https://coveralls.io/repos/jiren/raspar/badge.png?branch=master)](https://coveralls.io/r/jiren/raspar?branch=master)
@@ -20,7 +20,7 @@ And then execute:
 
 ```ruby
   
-  result = Rapsar.parse(url, html) #This will return parsed result object array.
+  result = Raspar.parse(url, html) #This will return parsed result object hash.
 
   #Result
   { :products => [
@@ -117,14 +117,14 @@ class SampleParser
 end
 ```
 
-- 'domain' method register parser for given domain value so raspar can differentiate parser at runtime.
+- 'domain' method registers parser for given domain, so raspar can differentiate parsers at runtime.
 - Define 'attr' which is going to parse. First argument is 'css' or 'xpath' selector. Second argument contain options.
   - Valid options are :field, :eval.
-  - :porp is selecting particular property/attribute for html element. In example for image, select image url using :prop => 'src'
-  - :eval is use to post process attr value. It can be proc, method or block. Each method, proc or block use for eval has two argument, first is html element text and second is html element as a Nokogiri doc.  
+  - :prop selects particular property/attribute for html element. In example for image, select image url using :prop => 'src'
+  - :eval is used to post process attr value. It can be proc, method or block. Each method, proc or block used for eval has two argument, first is html element text and second is html element as a Nokogiri doc.  
   - if :eval is not define then parser will return text of selected html element.
-- If your page has multiple type of objects or collections then define using 'collection' block. In above example '.item' and 'span.second' are product while '.offer' element contain offer detail.
-- In html page some of attributes are common which is not reside under particular collection and this attributes values are going to add for each parse object.
+- If your page has multiple type of objects or collections then define using 'collection' block. In above example '.item' and 'span.second' are products while '.offer' element contain offer detail.
+- In html page some of attributes are common which do not reside under any particular collection, such attribute values will be added to each parsed object.
 
 ### Add Parser in different way
 
